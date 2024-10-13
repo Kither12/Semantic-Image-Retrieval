@@ -1,0 +1,6 @@
+torch
+clip-by-openai
+Image
+grpcio
+ultraimport
+protobuf
