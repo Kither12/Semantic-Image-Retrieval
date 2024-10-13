@@ -8,11 +8,13 @@
 *.so
 *.dylib
 __pycache__
+
 bin
 include 
 lib 
 lib64
 share
+pyvenv.cfg
 
 # Test binary, built with `go test -c`
 *.test
