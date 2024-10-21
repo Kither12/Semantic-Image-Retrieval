@@ -1,18 +1,13 @@
 import model
 import grpc
 from concurrent import futures
-# from ..common.api.ModelService_pb2 import *
-# from ..common.api.ModelService_pb2_grpc import *
-import ultraimport
+from proto.ModelService_pb2 import *
+from proto.ModelService_pb2_grpc import *
 import configparser
 import base64
 
-ModelService_pb2 = ultraimport('__dir__/../common/api/ModelService_pb2.py')
-ModelService_pb2_grpc = ultraimport(
-    '__dir__/../common/api/ModelService_pb2_grpc.py')
 
-
-class ModelService(ModelService_pb2_grpc.ModelServiceServicer):
+class ModelService(ModelServiceServicer):
     def __init__(self):
         self.model = model.Model()
 
@@ -34,7 +29,7 @@ def serve():
     port = config.get('General', 'port')
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    ModelService_pb2_grpc.add_ModelServiceServicer_to_server(
+    add_ModelServiceServicer_to_server(
         ModelService(), server)
     server.add_insecure_port('[::]:' + port)
     server.start()

@@ -1,0 +1,19 @@
+syntax = "proto3";
+option go_package = "./api";
+
+service ModelService {
+    rpc TextEmbedding(TextEmbeddingRequest) returns(TextEmbeddingResponse);
+    rpc ImageEmbedding(stream ImageEmbeddingRequest) returns(ImageEmbeddingResponse);
+}
+message TextEmbeddingResponse{
+    repeated double embedding = 1;
+}
+message ImageEmbeddingResponse{
+    repeated double embedding = 1;
+}
+message TextEmbeddingRequest{
+    string text = 1;
+}
+message ImageEmbeddingRequest{
+    bytes chunk = 1;
+}
