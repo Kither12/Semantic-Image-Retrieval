@@ -5,7 +5,7 @@ from concurrent import futures
 # from ..common.api.ModelService_pb2_grpc import *
 import ultraimport
 import configparser
-
+import base64
 
 ModelService_pb2 = ultraimport('__dir__/../common/api/ModelService_pb2.py')
 ModelService_pb2_grpc = ultraimport(

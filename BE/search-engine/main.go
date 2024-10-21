@@ -1,12 +1,10 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
 	"search-engine/config"
-	"search-engine/database"
 
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -24,10 +22,9 @@ func main() {
 	defer lis.Close()
 
 	grpcServer := grpc.NewServer()
-	log.Println("GRPC server started")
+	log.Printf("GRPC server started at port: %s\n", viper.GetString("port"))
 
-	db := database.CreateDatabase(context.Background())
-	NewImageSevice(grpcServer, db)
+	NewImageSevice(grpcServer)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatal(err.Error())

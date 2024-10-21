@@ -3,10 +3,25 @@ option go_package = "./api";
 
 service ImageService {
     rpc Upload(stream UploadRequest) returns(UploadResponse);
+    rpc Search(SearchRequest) returns(stream SearchResponse);
 }
+
+message SearchResponse{
+    oneof data{
+        Info info = 1;
+        bytes chunk = 2;
+    }
+}
+
+message SearchRequest{
+    string prompt = 1;
+    uint32 total = 2;
+}
+
 message Info{
     string file_name = 1;
 }
+
 message UploadResponse{
     string id = 1;
     uint32 size = 2;

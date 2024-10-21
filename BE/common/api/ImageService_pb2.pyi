@@ -4,6 +4,22 @@ from typing import ClassVar as _ClassVar, Mapping as _Mapping, Optional as _Opti
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class SearchResponse(_message.Message):
+    __slots__ = ("info", "chunk")
+    INFO_FIELD_NUMBER: _ClassVar[int]
+    CHUNK_FIELD_NUMBER: _ClassVar[int]
+    info: Info
+    chunk: bytes
+    def __init__(self, info: _Optional[_Union[Info, _Mapping]] = ..., chunk: _Optional[bytes] = ...) -> None: ...
+
+class SearchRequest(_message.Message):
+    __slots__ = ("prompt", "total")
+    PROMPT_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_FIELD_NUMBER: _ClassVar[int]
+    prompt: str
+    total: int
+    def __init__(self, prompt: _Optional[str] = ..., total: _Optional[int] = ...) -> None: ...
+
 class Info(_message.Message):
     __slots__ = ("file_name",)
     FILE_NAME_FIELD_NUMBER: _ClassVar[int]

@@ -44,12 +44,23 @@ class ImageServiceStub(object):
                 request_serializer=ImageService__pb2.UploadRequest.SerializeToString,
                 response_deserializer=ImageService__pb2.UploadResponse.FromString,
                 _registered_method=True)
+        self.Search = channel.unary_stream(
+                '/ImageService/Search',
+                request_serializer=ImageService__pb2.SearchRequest.SerializeToString,
+                response_deserializer=ImageService__pb2.SearchResponse.FromString,
+                _registered_method=True)
 
 
 class ImageServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def Upload(self, request_iterator, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Search(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -62,6 +73,11 @@ def add_ImageServiceServicer_to_server(servicer, server):
                     servicer.Upload,
                     request_deserializer=ImageService__pb2.UploadRequest.FromString,
                     response_serializer=ImageService__pb2.UploadResponse.SerializeToString,
+            ),
+            'Search': grpc.unary_stream_rpc_method_handler(
+                    servicer.Search,
+                    request_deserializer=ImageService__pb2.SearchRequest.FromString,
+                    response_serializer=ImageService__pb2.SearchResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -91,6 +107,33 @@ class ImageService(object):
             '/ImageService/Upload',
             ImageService__pb2.UploadRequest.SerializeToString,
             ImageService__pb2.UploadResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Search(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(
+            request,
+            target,
+            '/ImageService/Search',
+            ImageService__pb2.SearchRequest.SerializeToString,
+            ImageService__pb2.SearchResponse.FromString,
             options,
             channel_credentials,
             insecure,

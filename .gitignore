@@ -16,6 +16,9 @@ lib64
 share
 pyvenv.cfg
 
+# Ignore image file 
+*.png
+
 # Test binary, built with `go test -c`
 *.test
 

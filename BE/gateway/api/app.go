@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,6 +26,7 @@ func (a *App) Run(port string) error {
 	g.Use(
 		gin.Recovery(),
 		gin.Logger(),
+		cors.Default(),
 	)
 
 	a.InitRoute(g)

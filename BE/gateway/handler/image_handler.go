@@ -2,7 +2,8 @@ package handler
 
 import (
 	pb "common/api"
-	"io"
+	"encoding/base64"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -26,53 +27,67 @@ func NewImageHandler() *ImageHandler {
 	return &ImageHandler{client: client, batchSize: viper.GetInt("image_upload_batch_size")}
 }
 
-func (handler *ImageHandler) Upload(ctx *gin.Context) {
-	file_header, err := ctx.FormFile("image")
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	file, err := file_header.Open()
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+type ImagePayload struct {
+	Image       string `json:"image"`
+	FileName    string `json:"fileName"`
+	ContentType string `json:"contentType"`
+}
 
+func (handler *ImageHandler) Upload(ctx *gin.Context) {
+	// Parse the JSON payload
+	var payload ImagePayload
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Failed to bind JSON data: %v", err)})
+		return
+	}	
+
+	imageData, err := base64.StdEncoding.DecodeString(payload.Image)
+    if err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Failed to decoded image data: %v", err)})
+		return
+    }
+
+	// Open the stream to the image server
 	stream, err := handler.client.Upload(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to open the uploading stream to image server: %v", err)})
 		return
 	}
 
-	if err := stream.Send(&pb.UploadRequest{Data: &pb.UploadRequest_Info{Info: &pb.Info{FileName: file_header.Filename}}}); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// Send the file info
+	if err := stream.Send(&pb.UploadRequest{Data: &pb.UploadRequest_Info{
+		Info: &pb.Info{FileName: payload.FileName},
+	}}); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to send file info to image server: %v", err)})
 		return
 	}
 
-	buf := make([]byte, handler.batchSize)
-	for {
-		num, err := file.Read(buf)
-		if err == io.EOF {
-			break
+	// Send the image data in chunks
+	chunkSize := handler.batchSize
+	for i := 0; i < len(imageData); i += chunkSize {
+		end := i + chunkSize
+		if end > len(imageData) {
+			end = len(imageData)
 		}
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		chunk := imageData[i:end]
+
+		if err := stream.Send(&pb.UploadRequest{
+			Data: &pb.UploadRequest_Chunk{Chunk: chunk},
+		}); err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to send buffer data to image server: %v", err)})
 			return
 		}
-		chunk := buf[:num]
-
-		if err := stream.Send(&pb.UploadRequest{Data: &pb.UploadRequest_Chunk{Chunk: chunk}}); err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
 	}
+
+	// Close the stream and receive the response
 	resp, err := stream.CloseAndRecv()
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to close image server stream: %v", err)})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"imageId": resp.Id, "imageSize": resp.Size})
-
+	ctx.JSON(http.StatusOK, gin.H{
+		"imageId":   resp.Id,
+		"imageSize": resp.Size,
+	})
 }
