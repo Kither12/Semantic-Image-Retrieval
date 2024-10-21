@@ -1,7 +1,6 @@
 package handler
 
 import (
-	pb "common/api"
 	"encoding/base64"
 	"fmt"
 	"log"
@@ -11,6 +10,8 @@ import (
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+
+	pb "gateway/proto"
 )
 
 type ImageHandler struct {
@@ -19,12 +20,12 @@ type ImageHandler struct {
 }
 
 func NewImageHandler() *ImageHandler {
-	conn, err := grpc.NewClient(viper.GetString("ImageServerAddr"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(viper.GetString("IMAGE_SERVER_ADDR"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
 	}
 	client := pb.NewImageServiceClient(conn)
-	return &ImageHandler{client: client, batchSize: viper.GetInt("image_upload_batch_size")}
+	return &ImageHandler{client: client, batchSize: viper.GetInt("IMAGE_UPLOAD_BATCH_SIZE")}
 }
 
 type ImagePayload struct {

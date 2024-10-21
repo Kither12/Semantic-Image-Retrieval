@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 type App struct {
@@ -21,6 +22,7 @@ func (a *App) InitRoute(g *gin.Engine) {
 
 func (a *App) Run(port string) error {
 
+	gin.SetMode(viper.GetString("MODE"))
 	g := gin.Default()
 
 	g.Use(
