@@ -14,6 +14,7 @@ class Model:
         data = self.preprocess(data).unsqueeze(0).to(self.device)
         with torch.no_grad():
             features = self.model.encode_image(data)
+        print(data.shape)
         return features[0].tolist()
 
     def get_embedded_text(self, data):

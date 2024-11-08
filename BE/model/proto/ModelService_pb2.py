@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12ModelService.proto\"*\n\x15TextEmbeddingResponse\x12\x11\n\tembedding\x18\x01 \x03(\x01\"+\n\x16ImageEmbeddingResponse\x12\x11\n\tembedding\x18\x01 \x03(\x01\"$\n\x14TextEmbeddingRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\"&\n\x15ImageEmbeddingRequest\x12\r\n\x05\x63hunk\x18\x01 \x01(\x0c\x32\x93\x01\n\x0cModelService\x12>\n\rTextEmbedding\x12\x15.TextEmbeddingRequest\x1a\x16.TextEmbeddingResponse\x12\x43\n\x0eImageEmbedding\x12\x16.ImageEmbeddingRequest\x1a\x17.ImageEmbeddingResponse(\x01\x42\x07Z\x05./apib\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12ModelService.proto\"*\n\x15TextEmbeddingResponse\x12\x11\n\tembedding\x18\x01 \x03(\x02\"+\n\x16ImageEmbeddingResponse\x12\x11\n\tembedding\x18\x01 \x03(\x02\"$\n\x14TextEmbeddingRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\"&\n\x15ImageEmbeddingRequest\x12\r\n\x05\x63hunk\x18\x01 \x01(\x0c\x32\x93\x01\n\x0cModelService\x12>\n\rTextEmbedding\x12\x15.TextEmbeddingRequest\x1a\x16.TextEmbeddingResponse\x12\x43\n\x0eImageEmbedding\x12\x16.ImageEmbeddingRequest\x1a\x17.ImageEmbeddingResponse(\x01\x42\x07Z\x05./apib\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'ModelService_pb2', globals())

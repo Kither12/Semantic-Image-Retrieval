@@ -6,10 +6,10 @@ service ModelService {
     rpc ImageEmbedding(stream ImageEmbeddingRequest) returns(ImageEmbeddingResponse);
 }
 message TextEmbeddingResponse{
-    repeated double embedding = 1;
+    repeated float embedding = 1;
 }
 message ImageEmbeddingResponse{
-    repeated double embedding = 1;
+    repeated float embedding = 1;
 }
 message TextEmbeddingRequest{
     string text = 1;
