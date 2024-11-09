@@ -28,13 +28,14 @@ const ImageResults: React.FC<ImageResultsProps> = ({
   return (
     <Box>
       <Grid container spacing={2}>
-        {images.map((image, index) => (
+        {(images || []).map((image, index) => (
           <Grid item xs={3} key={index}>
             <Card>
               <CardMedia
                 component="img"
                 height="140"
                 image={`http://localhost:8009/images/${image}`}
+                alt={`Image ${index}`}
               />
             </Card>
           </Grid>
