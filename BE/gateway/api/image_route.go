@@ -11,4 +11,5 @@ func InitImageRoute(g *gin.Engine) {
 
 	sessionRouterGroup := g.Group("api/v1/images")
 	sessionRouterGroup.POST("/", imageHandler.Upload)
+	sessionRouterGroup.GET("/", imageHandler.Search)
 }

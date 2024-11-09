@@ -16,9 +16,9 @@ run: build
 .PHONY: build-docker-image
 ## build-docker-image: builds the docker image
 build-docker-image:
-	@ docker buildx build . -t image-retrieval-gateway
+	@ docker buildx build . -t image-retrieval-search-engine
 
 .PHONY: run-docker
 ## run-docker: runs the server as a Docker container
 run-docker: 
-	@ docker run -p 8000:8000 image-retrieval-gateway
+	@ docker run -p 8002:8002 image-retrieval-search-engine

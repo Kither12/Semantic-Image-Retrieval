@@ -17,4 +17,5 @@ func main() {
 	if err := app.Run(viper.GetString("PORT")); err != nil {
 		log.Fatalf("%s", err.Error())
 	}
+	log.Printf("Gateway started at port: %s\n", viper.GetString("PORT"))
 }

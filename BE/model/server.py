@@ -19,7 +19,7 @@ class ModelService(ModelServiceServicer):
         for request in request_iterator:
             image_data_chunks.append(request.chunk)
         full_image_data = b''.join(image_data_chunks)
-        return ModelService_pb2.ImageEmbeddingResponse(embedding=self.model.get_embedded_image(full_image_data))
+        return ImageEmbeddingResponse(embedding=self.model.get_embedded_image(full_image_data))
 
 
 def serve():

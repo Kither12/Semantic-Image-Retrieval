@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -28,7 +29,7 @@ func NewImageHandler() *ImageHandler {
 	return &ImageHandler{client: client, batchSize: viper.GetInt("IMAGE_UPLOAD_BATCH_SIZE")}
 }
 
-type ImagePayload struct {
+type UploadRequestPayload struct {
 	Image       string `json:"image"`
 	FileName    string `json:"fileName"`
 	ContentType string `json:"contentType"`
@@ -36,17 +37,17 @@ type ImagePayload struct {
 
 func (handler *ImageHandler) Upload(ctx *gin.Context) {
 	// Parse the JSON payload
-	var payload ImagePayload
+	var payload UploadRequestPayload
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Failed to bind JSON data: %v", err)})
 		return
-	}	
+	}
 
 	imageData, err := base64.StdEncoding.DecodeString(payload.Image)
-    if err != nil {
-        ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Failed to decoded image data: %v", err)})
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Failed to decoded image data: %v", err)})
 		return
-    }
+	}
 
 	// Open the stream to the image server
 	stream, err := handler.client.Upload(ctx)
@@ -90,5 +91,32 @@ func (handler *ImageHandler) Upload(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"imageId":   resp.Id,
 		"imageSize": resp.Size,
+	})
+}
+
+func (handler *ImageHandler) Search(ctx *gin.Context) {
+
+	prompt := ctx.DefaultQuery("prompt", "")
+
+	limit, err := strconv.ParseUint(ctx.DefaultQuery("limit", "10"), 10, 64)
+	if err != nil || limit == 0 {
+		limit = 10
+	}
+
+	offset, err := strconv.ParseUint(ctx.DefaultQuery("offset", "0"), 10, 64)
+	if err != nil {
+		offset = 0
+	}
+
+	res, err := handler.client.Search(ctx, &pb.SearchRequest{Prompt: prompt, Limit: limit, Offset: offset})
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Failed to send search request to search engine: %v", err)})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"images": res.Path,
+		"total":  res.Total,
 	})
 }

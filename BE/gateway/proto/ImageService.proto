@@ -3,19 +3,18 @@ option go_package = "./proto";
 
 service ImageService {
     rpc Upload(stream UploadRequest) returns(UploadResponse);
-    rpc Search(SearchRequest) returns(stream SearchResponse);
+    rpc Search(SearchRequest) returns(SearchResponse);
 }
 
 message SearchResponse{
-    oneof data{
-        Info info = 1;
-        bytes chunk = 2;
-    }
+    repeated string path = 1;
+    uint64 total = 2;
 }
 
 message SearchRequest{
     string prompt = 1;
-    uint32 total = 2;
+    uint64 limit = 2;
+    uint64 offset = 3;
 }
 
 message Info{
