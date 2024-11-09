@@ -18,28 +18,43 @@ export async function uploadImage(formData: FormData) {
     body: JSON.stringify(payload),
   });
   if (!response.ok) {
-    const errorMessage = await response.text();
-    console.error("Image upload failed: " + errorMessage);
     return false;
   }
-
   return true;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function searchImages(formData: FormData) {
-  // const response = await fetch(
-  //   `http://localhost:8000/api/v1/images?query=${encodeURIComponent(query)}`,
-  //   {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   }
-  // );
-  // if (!response.ok) {
-  //   throw new Error("Failed to fetch images by text");
-  // }
-  // const data = await response.json();
-  // return data.images;
+export async function searchImages({
+  prompt,
+  limit,
+  offset,
+}: {
+  prompt: string;
+  limit: string;
+  offset: string;
+}) {
+  const queryParams = new URLSearchParams({
+    prompt,
+    limit,
+    offset,
+  });
+
+  const response = await fetch(
+    `http://localhost:8000/api/v1/images?${queryParams.toString()}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch images by text");
+  }
+
+  const data = await response.json();
+  return {
+    path: data.images,
+    total: data.total,
+  };
 }
